@@ -15,7 +15,7 @@ npm i lejeunerenard/electron-store-ipc-bridge
 
 ```js
 import { contextBridge, ipcRenderer } from 'electron'
-import { attachStoreRenderer } from './settings-store.mjs'
+import { attachStoreRenderer } from '@lejeunerenard/electron-store-ipc-bridge'
 
 attachStoreRenderer(contextBridge, ipcRenderer, 'store')
 ```
@@ -24,7 +24,7 @@ attachStoreRenderer(contextBridge, ipcRenderer, 'store')
 
 ```js
 import Store from 'electron-store'
-import { attachStore } from './settings-store.mjs'
+import { attachStore } from '@lejeunerenard/electron-store-ipc-bridge'
 const { ipcMain } = require('electron')
 
 // Create Store
