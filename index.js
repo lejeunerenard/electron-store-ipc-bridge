@@ -15,7 +15,7 @@ export function attachStore (ipc, store, namespace = 'electron:store') {
 }
 
 export function attachStoreRenderer (contextBridge, ipcRenderer, domain = 'store', namespace = 'electron:store') {
-  contextBridge.exposeInMainWorld(domain, {
+  const store = {
     get: (key, defaultValue) => {
       return ipcRenderer.sendSync(namespace + ':get', key, defaultValue)
     },
@@ -29,5 +29,8 @@ export function attachStoreRenderer (contextBridge, ipcRenderer, domain = 'store
       ipcRenderer.send(namespace + ':onDidChange', key)
       ipcRenderer.on(namespace + ':onDidChange:' + key, (event, ...args) => func(...args))
     }
-  })
+  }
+  contextBridge.exposeInMainWorld(domain, store)
+
+  return store
 }

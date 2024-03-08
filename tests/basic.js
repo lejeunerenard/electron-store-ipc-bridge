@@ -100,7 +100,7 @@ test('attachStore', (t) => {
 
 test('attachStoreRenderer', (t) => {
   t.test('basic', (t) => {
-    t.plan(7)
+    t.plan(8)
     const ipc = new TestIPC()
     const store = makeStore()
 
@@ -112,7 +112,8 @@ test('attachStoreRenderer', (t) => {
     }
 
     attachStore(ipc, store)
-    attachStoreRenderer(contextBridge, ipc, 'rendererStore')
+    const rendererStore = attachStoreRenderer(contextBridge, ipc, 'rendererStore')
+    t.equal(rendererStore, myGlobal.rendererStore, 'returns the store obj')
 
     // 'Set' event
     t.equal(store.get('foo'), undefined, 'store is empty')
