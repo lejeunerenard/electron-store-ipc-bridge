@@ -1,7 +1,7 @@
 export function attachStore (ipc, store, namespace = 'electron:store') {
   // IPC listener
-  ipc.on(namespace + ':get', async (event, val) => {
-    event.returnValue = store.get(val)
+  ipc.on(namespace + ':get', async (event, val, defaultValue) => {
+    event.returnValue = store.get(val, defaultValue)
   })
   ipc.on(namespace + ':has', async (event, val) => {
     event.returnValue = store.has(val)
@@ -16,8 +16,8 @@ export function attachStore (ipc, store, namespace = 'electron:store') {
 
 export function attachStoreRenderer (contextBridge, ipcRenderer, domain = 'store', namespace = 'electron:store') {
   contextBridge.exposeInMainWorld(domain, {
-    get: (key) => {
-      return ipcRenderer.sendSync(namespace + ':get', key)
+    get: (key, defaultValue) => {
+      return ipcRenderer.sendSync(namespace + ':get', key, defaultValue)
     },
     has: (key) => {
       return ipcRenderer.sendSync(namespace + ':has', key)

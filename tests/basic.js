@@ -178,4 +178,30 @@ test('attachStoreRenderer', (t) => {
     store.set('foo', 'beep')
     t.end()
   })
+
+  t.test('get - default value', (t) => {
+    const ipc = new TestIPC()
+    const store = makeStore()
+
+    const ns = Math.random() + ':ns'
+
+    const myGlobal = {}
+    const contextBridge = {
+      exposeInMainWorld (domain, obj) {
+        myGlobal[domain] = obj
+      }
+    }
+
+    attachStore(ipc, store, ns)
+    attachStoreRenderer(contextBridge, ipc, 'rendererStore', ns)
+
+    // 'Set' event
+    t.equal(myGlobal.rendererStore.get('foo', 'bar'), 'bar', 'gets default when not defined')
+    store.set('foo', 2)
+
+    // 'Get' event
+    const fooGet = myGlobal.rendererStore.get('foo', 'baz')
+    t.equal(fooGet, 2, 'get defined foo value')
+    t.end()
+  })
 })
