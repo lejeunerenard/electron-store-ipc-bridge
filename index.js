@@ -1,27 +1,27 @@
-export function attachStore (ipc, store) {
+export function attachStore (ipc, store, namespace = 'electron:store') {
   // IPC listener
-  ipc.on('electron:store:get', async (event, val) => {
+  ipc.on(namespace + ':get', async (event, val) => {
     event.returnValue = store.get(val)
   })
-  ipc.on('electron:store:set', async (event, key, val) => {
+  ipc.on(namespace + ':set', async (event, key, val) => {
     store.set(key, val)
   })
-  ipc.on('electron:store:onDidChange', async (event, key) => {
-    store.onDidChange(key, (...args) => event.reply('electron:store:onDidChange:' + key, ...args))
+  ipc.on(namespace + ':onDidChange', async (event, key) => {
+    store.onDidChange(key, (...args) => event.reply(namespace + ':onDidChange:' + key, ...args))
   })
 }
 
-export function attachStoreRenderer (contextBridge, ipcRenderer, domain = 'store') {
+export function attachStoreRenderer (contextBridge, ipcRenderer, domain = 'store', namespace = 'electron:store') {
   contextBridge.exposeInMainWorld(domain, {
     get: (key) => {
-      return ipcRenderer.sendSync('electron:store:get', key)
+      return ipcRenderer.sendSync(namespace + ':get', key)
     },
     set: (property, val) => {
-      ipcRenderer.send('electron:store:set', property, val)
+      ipcRenderer.send(namespace + ':set', property, val)
     },
     onDidChange: (key, func) => {
-      ipcRenderer.send('electron:store:onDidChange', key)
-      ipcRenderer.on('electron:store:onDidChange:' + key, (event, ...args) => func(...args))
+      ipcRenderer.send(namespace + ':onDidChange', key)
+      ipcRenderer.on(namespace + ':onDidChange:' + key, (event, ...args) => func(...args))
     }
   })
 }
