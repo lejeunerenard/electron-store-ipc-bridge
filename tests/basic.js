@@ -37,7 +37,7 @@ class TestIPC extends EventEmitter {
 
 test('attachStore', (t) => {
   t.test('basic', (t) => {
-    t.plan(5)
+    t.plan(7)
     const ipc = new TestIPC()
     const store = makeStore()
     attachStore(ipc, store)
@@ -51,6 +51,12 @@ test('attachStore', (t) => {
     const fooGet = ipc.sendSync('electron:store:get', 'foo')
     t.equal(fooGet, 'bar', 'get foo value via sendSync')
 
+    // 'Has' event
+    const hasFoo = ipc.sendSync('electron:store:has', 'foo')
+    const hasBar = ipc.sendSync('electron:store:has', 'bar')
+    t.equal(hasFoo, true, 'has foo')
+    t.equal(hasBar, false, 'hasnt bar')
+
     // 'onDidChange' event
     ipc.once('electron:store:onDidChange:foo', (event, next, prev) => {
       t.equal(prev, 'bar', 'got previous value')
@@ -61,7 +67,7 @@ test('attachStore', (t) => {
   })
 
   t.test('custom namespace', (t) => {
-    t.plan(5)
+    t.plan(7)
     const ipc = new TestIPC()
     const store = makeStore()
     const ns = 'baz'
@@ -76,6 +82,12 @@ test('attachStore', (t) => {
     const fooGet = ipc.sendSync(`${ns}:get`, 'foo')
     t.equal(fooGet, 'bar', 'get foo value via sendSync')
 
+    // 'Has' event
+    const hasFoo = ipc.sendSync(`${ns}:has`, 'foo')
+    const hasBar = ipc.sendSync(`${ns}:has`, 'bar')
+    t.equal(hasFoo, true, 'has foo')
+    t.equal(hasBar, false, 'hasnt bar')
+
     // 'onDidChange' event
     ipc.once(`${ns}:onDidChange:foo`, (event, next, prev) => {
       t.equal(prev, 'bar', 'got previous value')
@@ -88,7 +100,7 @@ test('attachStore', (t) => {
 
 test('attachStoreRenderer', (t) => {
   t.test('basic', (t) => {
-    t.plan(5)
+    t.plan(7)
     const ipc = new TestIPC()
     const store = makeStore()
 
@@ -111,6 +123,12 @@ test('attachStoreRenderer', (t) => {
     const fooGet = myGlobal.rendererStore.get('foo')
     t.equal(fooGet, 'bar', 'get foo value')
 
+    // 'Has' event
+    const hasFoo = myGlobal.rendererStore.has('foo')
+    const hasBar = myGlobal.rendererStore.has('bar')
+    t.equal(hasFoo, true, 'has foo')
+    t.equal(hasBar, false, 'hasnt bar')
+
     // 'onDidChange' event
     myGlobal.rendererStore.onDidChange('foo', (next, prev) => {
       t.equal(prev, 'bar', 'got previous value')
@@ -121,7 +139,7 @@ test('attachStoreRenderer', (t) => {
   })
 
   t.test('custom namespace', (t) => {
-    t.plan(5)
+    t.plan(7)
     const ipc = new TestIPC()
     const store = makeStore()
 
@@ -145,6 +163,12 @@ test('attachStoreRenderer', (t) => {
     // 'Get' event
     const fooGet = myGlobal.rendererStore.get('foo')
     t.equal(fooGet, 'bar', 'get foo value')
+
+    // 'Has' event
+    const hasFoo = myGlobal.rendererStore.has('foo')
+    const hasBar = myGlobal.rendererStore.has('bar')
+    t.equal(hasFoo, true, 'has foo')
+    t.equal(hasBar, false, 'hasnt bar')
 
     // 'onDidChange' event
     myGlobal.rendererStore.onDidChange('foo', (next, prev) => {
