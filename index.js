@@ -1,15 +1,15 @@
 export function attachStore (ipc, store, namespace = 'electron:store') {
   // IPC listener
-  ipc.on(namespace + ':get', async (event, val, defaultValue) => {
+  ipc.on(namespace + ':get', (event, val, defaultValue) => {
     event.returnValue = store.get(val, defaultValue)
   })
-  ipc.on(namespace + ':has', async (event, val) => {
+  ipc.on(namespace + ':has', (event, val) => {
     event.returnValue = store.has(val)
   })
-  ipc.on(namespace + ':set', async (event, key, val) => {
+  ipc.on(namespace + ':set', (event, key, val) => {
     store.set(key, val)
   })
-  ipc.on(namespace + ':onDidChange', async (event, key) => {
+  ipc.on(namespace + ':onDidChange', (event, key) => {
     store.onDidChange(key, (...args) => event.reply(namespace + ':onDidChange:' + key, ...args))
   })
 }
